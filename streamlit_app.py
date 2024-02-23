@@ -25,24 +25,26 @@ streamlit.header('Build Your Own Smoothie')
 fruits_selected = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.index), ['Avocado','Strawberries'])
 fruits_to_show = my_fruit_list.loc[fruits_selected] #use indices of selected fruits
 
-# Display the table on the page.
-
-
 streamlit.dataframe(fruits_to_show)
 
-#fruityvice
+### fruityvice ###
+
+def get_fruityvice_data(this_fruit_choice):
+   fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+   fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
+   return fruityvice_normalized
+
 streamlit.header("Fruityvice Fruit Advice!")
+try:
+   fruit_choice = streamlit.text_input('What fruit would you like information about?')
+   if not fruit_choice:
+      streamlit.error("Please select a fruit to get information.")
+   else:
+      back_from_function = get_fruityvice_data(fruit_choice)
+      streamlit.dataframe(back_from_function)
+      
 
-fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
-streamlit.write('The user entered ', fruit_choice)
 
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-# # streamlit.text(fruityvice_response.json())
-
-# put the json into pandas df
-fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
-# display the df
-streamlit.dataframe(fruityvice_normalized)
 
 streamlit.header('Snowflake Connection')
 
